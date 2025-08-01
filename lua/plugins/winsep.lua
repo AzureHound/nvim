@@ -1,0 +1,32 @@
+return {
+  "nvim-zh/colorful-winsep.nvim",
+  config = true,
+  event = { "WinNew", "WinLeave" },
+  opts = {
+    hi = {
+      bg = "#24273a",
+      fg = "#c6a0f6",
+    },
+    symbols = { "━", "┃", "┏", "┓", "┗", "┛" },
+    smooth = true,
+    exponential_smoothing = true,
+    no_exec_files = {
+      "alpha",
+      "edgy",
+      "netrw",
+      "NvimTree",
+      "lazy",
+      "mason",
+      "oil",
+      "neo-tree",
+      "oil",
+      "outline",
+      "spectre",
+      "startuptime",
+      "symbols-outline",
+      "TelescopePrompt",
+      "trouble",
+      "vim-be-good",
+    },
+  },
+}
