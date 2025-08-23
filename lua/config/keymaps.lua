@@ -142,8 +142,8 @@ map("n", "<C-c>", ":%y+<CR>", { desc = "Copy Whole Text to Clipboard", silent = 
 map("n", "U", "<C-r>", { desc = "Redo" })
 
 -- delete
-vim.keymap.set({ "n", "v" }, "d", '"_d', { noremap = true, desc = "Delete without copying" })
-vim.keymap.set("n", "dd", '"_dd', { noremap = true, desc = "Delete line without copying" })
+-- vim.keymap.set({ "n", "v" }, "d", '"_d', { noremap = true, desc = "Delete without copying" })
+-- vim.keymap.set("n", "dd", '"_dd', { noremap = true, desc = "Delete line without copying" })
 
 -- Hightlight yanking
 vim.api.nvim_create_autocmd("TextYankPost", {

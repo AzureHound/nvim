@@ -4,8 +4,45 @@ return {
   name = "catppuccin",
   priority = 1000,
   opts = {
-    transparent = true,
+    flavour = "macchiato", -- latte, frappe, macchiato, mocha
+    background = {
+      light = "frappe",
+      dark = "macchiato",
+    },
     transparent_background = true,
+    float = {
+      transparent = true,
+      solid = false,
+    },
+    show_end_of_buffer = false,
+    term_colors = true,
+    dim_inactive = {
+      enabled = false,
+      shade = "dark",
+      percentage = 0.15,
+    },
+    no_italic = false,
+    no_bold = false,
+    no_underline = false,
+    styles = {
+      comments = { "italic" },
+      conditionals = { "italic" },
+      loops = {},
+      functions = {},
+      keywords = {},
+      strings = {},
+      variables = {},
+      numbers = {},
+      booleans = {},
+      properties = {},
+      types = {},
+      operators = {},
+      -- miscs = {},
+    },
+    color_overrides = {},
+    custom_highlights = {},
+    default_integrations = true,
+    auto_integrations = false,
     integrations = {
       aerial = true,
       alpha = true,
@@ -18,20 +55,15 @@ return {
       gitsigns = true,
       headlines = true,
       illuminate = true,
+      nvimtree = true,
       indent_blankline = { enabled = true },
       leap = true,
       lsp_trouble = true,
       mason = true,
       markdown = true,
-      mini = true,
-      native_lsp = {
+      mini = {
         enabled = true,
-        underlines = {
-          errors = { "undercurl" },
-          hints = { "undercurl" },
-          warnings = { "undercurl" },
-          information = { "undercurl" },
-        },
+        indentscope_color = "",
       },
       navic = { enabled = true, custom_bg = "lualine" },
       neotest = true,
@@ -44,17 +76,6 @@ return {
       treesitter = true,
       treesitter_context = true,
       which_key = true,
-    },
-  },
-  specs = {
-    {
-      "akinsho/bufferline.nvim",
-      optional = true,
-      opts = function(_, opts)
-        if (vim.g.colors_name or ""):find("catppuccin") then
-          opts.highlights = require("catppuccin.groups.integrations.bufferline").get()
-        end
-      end,
     },
   },
 }
