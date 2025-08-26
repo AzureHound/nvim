@@ -149,11 +149,11 @@ return {
       desc = "Smart Find Files",
     },
     {
-      "<leader>fz",
+      "<leader><leader>",
       function()
-        Snacks.picker.zoxide()
+        Snacks.picker.buffers()
       end,
-      desc = "Zoxide",
+      desc = "Buffers",
     },
     {
       "<leader>/",
@@ -163,7 +163,14 @@ return {
       desc = "Grep",
     },
     {
-      "<leader>ch",
+      "<leader>fz",
+      function()
+        Snacks.picker.zoxide()
+      end,
+      desc = "Zoxide",
+    },
+    {
+      "<leader>:",
       function()
         Snacks.picker.command_history()
       end,
@@ -276,7 +283,7 @@ return {
       end,
       desc = "Git Log File",
     },
-    -- Grep
+    -- grep
     {
       "<leader>sb",
       function()
@@ -336,7 +343,7 @@ return {
       desc = "Buffer Lines",
     },
     {
-      "<leader>sc",
+      "<leader>:",
       function()
         Snacks.picker.command_history()
       end,
