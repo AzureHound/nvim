@@ -14,6 +14,9 @@ return {
     },
     ensure_installed = {
       "hyprls",
+      "nixfmt",
+      "nixpkgs-fmt",
+      "rnix-lsp",
     },
   },
 }
