@@ -28,6 +28,7 @@ return {
         vim.o.laststatus = 0
       end
     end,
+
     opts = function()
       -- PERF: we don't need this lualine require madness 🤷
       local lualine_require = require("lualine_require")
@@ -49,9 +50,45 @@ return {
           lualine_a = { { "mode", icon = "" } },
           lualine_b = {
             {
-              "branch",
-              icon = "",
-              color = { fg = "#33ffbd" },
+              function()
+                local branch = vim.b.gitsigns_head or vim.fn.FugitiveHead()
+                if not branch or branch == "" then
+                  return ""
+                end
+
+                if not _G.git_remote_data then
+                  local handle = io.popen("git remote get-url origin 2>/dev/null")
+                  if handle then
+                    local url = handle:read("*a"):gsub("%s+", "")
+                    handle:close()
+                    if url:match("github%.com") then
+                      _G.git_remote_data = { icon = " ", color = "#a5adcb" }
+                    elseif url:match("gitlab") then
+                      _G.git_remote_data = { icon = " ", color = "#f5a97f" }
+                    elseif url:match("bitbucket") then
+                      _G.git_remote_data = { icon = " ", color = "#8aadf4" }
+                    else
+                      _G.git_remote_data = { icon = " ", color = "#a6da95" }
+                    end
+                  else
+                    _G.git_remote_data = { icon = " ", color = "#a6da95" }
+                  end
+                end
+                return _G.git_remote_data.icon
+              end,
+              color = function()
+                return _G.git_remote_data and { fg = _G.git_remote_data.color } or { fg = "#a6da95" }
+              end,
+              padding = { left = 1, right = 0 },
+              separator = "",
+            },
+            {
+              function()
+                local branch = vim.b.gitsigns_head or vim.fn.FugitiveHead()
+                return branch or ""
+              end,
+              color = { fg = "#a6da95" },
+              padding = { left = 0, right = 1 },
             },
           },
           lualine_c = {
