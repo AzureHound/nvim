@@ -4,12 +4,6 @@ return {
   name = "catppuccin",
   priority = 1000,
   opts = function()
-    -- Workaround for bufferline compatibility
-    local ok, module = pcall(require, "catppuccin.groups.integrations.bufferline")
-    if ok and module and not module.get and type(module.get_theme) == "function" then
-      module.get = module.get_theme
-    end
-
     return {
       flavour = "macchiato", -- latte, frappe, macchiato, mocha
       background = {
