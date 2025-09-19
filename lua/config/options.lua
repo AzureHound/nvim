@@ -140,7 +140,7 @@ opt.wildignore:append({ "*/node_modules/*" })
 
 if vim.fn.has("nvim-0.10") == 1 then
   opt.smoothscroll = true
-  opt.foldexpr = "v:lua.require'lazyvim.util'.ui.foldexpr()"
+  opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
   opt.foldmethod = "expr"
   opt.foldtext = ""
 else
