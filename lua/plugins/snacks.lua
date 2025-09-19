@@ -2,7 +2,7 @@ local key = require("plugins.which-key")
 return {
   "folke/snacks.nvim",
   dependencies = {
-    "echasnovski/mini.nvim",
+    "nvim-mini/mini.nvim",
   },
   priority = 1000,
   lazy = false,
