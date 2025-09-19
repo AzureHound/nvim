@@ -57,27 +57,44 @@ return {
                 end
 
                 if not _G.git_remote_data then
-                  local handle = io.popen("git remote get-url origin 2>/dev/null")
-                  if handle then
-                    local url = handle:read("*a"):gsub("%s+", "")
-                    handle:close()
-                    if url:match("github%.com") then
-                      _G.git_remote_data = { icon = " ", color = "#a5adcb" }
-                    elseif url:match("gitlab") then
-                      _G.git_remote_data = { icon = " ", color = "#f5a97f" }
-                    elseif url:match("bitbucket") then
-                      _G.git_remote_data = { icon = " ", color = "#8aadf4" }
-                    else
-                      _G.git_remote_data = { icon = " ", color = "#a6da95" }
+                  _G.git_remote_data = { icon = " ", color = "#a6da95" }
+
+                  local remote_handle =
+                    io.popen("git config branch.$(git symbolic-ref --short HEAD).remote 2>/dev/null")
+                  if remote_handle then
+                    local remote_name = remote_handle:read("*l")
+                    remote_handle:close()
+
+                    if remote_name and remote_name ~= "" then
+                      local url_handle = io.popen("git config remote." .. remote_name .. ".url 2>/dev/null")
+                      if url_handle then
+                        local url = url_handle:read("*a")
+                        url_handle:close()
+
+                        if url and url ~= "" then
+                          url = url:gsub("%s+", "")
+                          if url:match("github%.com") then
+                            _G.git_remote_data = { icon = " ", color = "#a5adcb" }
+                          elseif url:match("gitlab") then
+                            _G.git_remote_data = { icon = " ", color = "#f5a97f" }
+                          elseif url:match("forgejo") or remote_name == "forgejo" then
+                            _G.git_remote_data = { icon = " ", color = "#ee99a0" }
+                          elseif url:match("bitbucket") then
+                            _G.git_remote_data = { icon = " ", color = "#8aadf4" }
+                          end
+                        end
+                      end
                     end
-                  else
-                    _G.git_remote_data = { icon = " ", color = "#a6da95" }
                   end
                 end
+
                 return _G.git_remote_data.icon
               end,
               color = function()
-                return _G.git_remote_data and { fg = _G.git_remote_data.color } or { fg = "#a6da95" }
+                if not _G.git_remote_data then
+                  return { fg = "#a6da95" }
+                end
+                return { fg = _G.git_remote_data.color }
               end,
               padding = { left = 1, right = 0 },
               separator = "",
