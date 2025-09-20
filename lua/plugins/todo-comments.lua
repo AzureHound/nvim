@@ -72,14 +72,14 @@ return {
       desc = "Previous todo comment",
     },
     {
-      "<leader>pt",
+      "<leader>st",
       function()
         require("snacks").picker.todo_comments()
       end,
       desc = "Todo",
     },
     {
-      "<leader>pT",
+      "<leader>sT",
       function()
         require("snacks").picker.todo_comments({ keywords = { "TODO", "FIX", "FIXME" } })
       end,

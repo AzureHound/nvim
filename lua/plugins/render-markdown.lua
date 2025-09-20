@@ -29,7 +29,6 @@ return {
         },
       },
       patterns = {
-
         markdown = {
           disable = true,
           directives = {

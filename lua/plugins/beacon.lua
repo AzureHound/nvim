@@ -1,5 +1,6 @@
 return {
   "danilamihailov/beacon.nvim",
+  enabled = true,
   event = "VeryLazy",
   opts = {
     enabled = true,
