@@ -5,50 +5,8 @@ return {
     -- "epwalsh/obsidian.nvim",
     "obsidian-nvim/obsidian.nvim", -- NOTE: Using a fork from the community
     dependencies = { "nvim-lua/plenary.nvim" },
-    ft = "markdown",
-    event = "BufReadPre " .. vim.fn.expand("~") .. "Obsidian/**.md",
-
-    note_id_func = function(title)
-      if title == nil or title == "" then
-        return os.date("%Y-%m-%d %H:%M:%S")
-      else
-        return title:gsub(" ", "-"):gsub("[^A-Za-z0-9-]", ""):lower()
-      end
-    end,
-
-    note_path_func = function(spec)
-      local path = spec.dir / tostring(spec.id)
-      return path:with_suffix(".md")
-    end,
-
-    note_frontmatter_func = function(note)
-      if note.title then
-        note:add_alias(note.title)
-      end
-
-      local out = { aliases = note.aliases }
-
-      if note.metadata ~= nil and not vim.tbl_isempty(note.metadata) then
-        for k, v in pairs(note.metadata) do
-          out[k] = v
-        end
-      end
-
-      return out
-    end,
-
-    follow_url_func = function(url)
-      vim.fn.jobstart({ "xdg-open", url })
-    end,
-
-    image = {
-      resolve = function(path, src)
-        if require("obsidian.api").path_is_note(path) then
-          return require("obsidian.api").resolve_image_path(src)
-        end
-      end,
-    },
-
+    -- ft = "markdown",
+    event = "BufReadPre " .. vim.fn.expand("~") .. "/Obsidian/**.md",
     opts = {
       workspaces = {
         {
@@ -95,19 +53,22 @@ return {
         default_tags = { "daily-notes" },
         template = nil,
       },
+      checkbox = {
+        enabled = true,
+        create_new = true,
+        order = { " ", "~", "!", ">", "x" },
+      },
       ui = {
         enable = true,
         ignore_conceal_warn = false,
         update_debounce = 200,
         max_file_length = 5000,
         checkbox = {
-          order = {
-            [" "] = { char = "󰄱 ", hl_group = "obsidiantodo" },
-            ["~"] = { char = "󰰱 ", hl_group = "obsidiantilde" },
-            ["!"] = { char = " ", hl_group = "obsidianimportant" },
-            [">"] = { char = " ", hl_group = "obsidianrightarrow" },
-            ["x"] = { char = "✔ ", hl_group = "obsidiandone" },
-          },
+          [" "] = { char = "󰄱 ", hl_group = "ObsidianTodo" },
+          ["~"] = { char = "󰰱 ", hl_group = "ObsidianTilde" },
+          ["!"] = { char = "  ", hl_group = "ObsidianImportant" },
+          [">"] = { char = " ", hl_group = "ObsidianRightArrow" },
+          ["x"] = { char = "✔ ", hl_group = "ObsidianDone" },
         },
         bullets = { char = "•", hl_group = "ObsidianBullet" },
         external_link_icon = { char = " ", hl_group = "ObsidianExtLinkIcon" },
@@ -133,16 +94,6 @@ return {
         img_folder = "assets/imgs",
         confirm_img_paste = true,
       },
-      callbacks = {
-        enter_note = function(_, note)
-          vim.keymap.set("n", "gf", "<cmd>ObsidianFollowLink<cr>", {
-            buffer = note.bufnr,
-            expr = note.expr,
-            noremap = note.noremap,
-            desc = "File Passthrough",
-          })
-        end,
-      },
       statusline = {
         format = "{{backlinks}} backlinks  {{properties}} properties  {{words}} words  {{chars}} chars",
         enabled = true,
@@ -157,32 +108,82 @@ return {
         use_advanced_uri = false,
         func = vim.ui.open,
       },
-      checkbox = {
-        enabled = true,
-        create_new = true,
-        order = { " ", "~", "!", ">", "x" },
-      },
       comment = {
         enabled = false,
       },
-      keys = {
-        { prefix .. "o", "<cmd>ObsidianOpen<CR>", desc = "Open on App" },
-        { prefix .. "g", "<cmd>ObsidianSearch<CR>", desc = "Grep" },
-        { prefix .. "n", "<cmd>ObsidianNew<CR>", desc = "New Note" },
-        { prefix .. "N", "<cmd>Obsidian new_from_template<CR>", desc = "New Note (Template)" },
-        { prefix .. "<space>", "<cmd>ObsidianQuickSwitch<CR>", desc = "Find Files" },
-        { prefix .. "b", "<cmd>ObsidianBacklinks<CR>", desc = "Backlinks" },
-        { prefix .. "t", "<cmd>ObsidianTags<CR>", desc = "Tags" },
-        { prefix .. "T", "<cmd>ObsidianTemplate<CR>", desc = "Template" },
-        { prefix .. "L", "<cmd>ObsidianLink<CR>", mode = "v", desc = "Link" },
-        { prefix .. "l", "<cmd>ObsidianLinks<CR>", desc = "Links" },
-        { prefix .. "l", "<cmd>ObsidianLinkNew<CR>", mode = "v", desc = "New Link" },
-        { prefix .. "e", "<cmd>ObsidianExtractNote<CR>", mode = "v", desc = "Extract Note" },
-        { prefix .. "w", "<cmd>ObsidianWorkspace<CR>", desc = "Workspace" },
-        { prefix .. "r", "<cmd>ObsidianRename<CR>", desc = "Rename" },
-        { prefix .. "i", "<cmd>ObsidianPasteImg<CR>", desc = "Paste Image" },
-        { prefix .. "d", "<cmd>ObsidianDailies<CR>", desc = "Daily Notes" },
-      },
+    },
+    keys = {
+      { prefix .. "o", "<cmd>ObsidianOpen<CR>", desc = "Open on App" },
+      { prefix .. "g", "<cmd>ObsidianSearch<CR>", desc = "Grep" },
+      { prefix .. "n", "<cmd>ObsidianNew<CR>", desc = "New Note" },
+      { prefix .. "N", "<cmd>Obsidian new_from_template<CR>", desc = "New Note (Template)" },
+      { prefix .. "<space>", "<cmd>ObsidianQuickSwitch<CR>", desc = "Find Files" },
+      { prefix .. "b", "<cmd>ObsidianBacklinks<CR>", desc = "Backlinks" },
+      { prefix .. "t", "<cmd>ObsidianTags<CR>", desc = "Tags" },
+      { prefix .. "T", "<cmd>ObsidianTemplate<CR>", desc = "Template" },
+      { prefix .. "L", "<cmd>ObsidianLink<CR>", mode = "v", desc = "Link" },
+      { prefix .. "l", "<cmd>ObsidianLinks<CR>", desc = "Links" },
+      { prefix .. "l", "<cmd>ObsidianLinkNew<CR>", mode = "v", desc = "New Link" },
+      { prefix .. "e", "<cmd>ObsidianExtractNote<CR>", mode = "v", desc = "Extract Note" },
+      { prefix .. "w", "<cmd>ObsidianWorkspace<CR>", desc = "Workspace" },
+      { prefix .. "r", "<cmd>ObsidianRename<CR>", desc = "Rename" },
+      { prefix .. "i", "<cmd>ObsidianPasteImg<CR>", desc = "Paste Image" },
+      { prefix .. "d", "<cmd>ObsidianDailies<CR>", desc = "Daily Notes" },
+    },
+
+    callbacks = {
+      enter_note = function(client, note)
+        if not note or not note.bufnr then
+          return
+        end
+        vim.keymap.set("n", "gf", "<cmd>ObsidianFollowLink<cr>", {
+          buffer = note.bufnr,
+          expr = note.expr,
+          noremap = note.noremap,
+          desc = "File Passthrough",
+        })
+      end,
+    },
+
+    note_id_func = function(title)
+      if title == nil or title == "" then
+        return os.date("%Y-%m-%d %H:%M:%S")
+      else
+        return title:gsub(" ", "-"):gsub("[^A-Za-z0-9-]", ""):lower()
+      end
+    end,
+
+    note_path_func = function(spec)
+      local path = spec.dir / tostring(spec.id)
+      return path:with_suffix(".md")
+    end,
+
+    note_frontmatter_func = function(note)
+      if note.title then
+        note:add_alias(note.title)
+      end
+
+      local out = { aliases = note.aliases }
+
+      if note.metadata ~= nil and not vim.tbl_isempty(note.metadata) then
+        for k, v in pairs(note.metadata) do
+          out[k] = v
+        end
+      end
+
+      return out
+    end,
+
+    follow_url_func = function(url)
+      vim.fn.jobstart({ "xdg-open", url })
+    end,
+
+    image = {
+      resolve = function(path, src)
+        if require("obsidian.api").path_is_note(path) then
+          return require("obsidian.api").resolve_image_path(src)
+        end
+      end,
     },
   },
   {
