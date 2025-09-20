@@ -34,6 +34,7 @@ return {
           { icon = " ", key = "p", desc = "Projects/Repos", action = ":lua Snacks.dashboard.pick('projects')" },
           { icon = " ", key = "z", desc = "Zoxide", action = ":lua Snacks.picker.zoxide()"},
           { icon = " ", key = "c", desc = "Config", action = ":lua Snacks.dashboard.pick('files', {cwd = vim.fn.stdpath('config')})" },
+          { icon = "󰛢 ", key = "e", desc = "Harpoon", action = function() require("harpoon").ui:toggle_quick_menu(require("harpoon"):list()) end },
           { icon = " ", key = "s", desc = "Restore Session", section = "session" },
           { icon = "󰗚 ", key = "h", desc = "Help Pages", action = ":lua Snacks.picker.help()" },
           { icon = " ", key = "x", desc = "Lazy Extras", action = ":LazyExtras" },
