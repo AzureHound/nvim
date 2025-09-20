@@ -5,26 +5,50 @@ return {
     -- "epwalsh/obsidian.nvim",
     "obsidian-nvim/obsidian.nvim", -- NOTE: Using a fork from the community
     dependencies = { "nvim-lua/plenary.nvim" },
-    -- ft = "markdown",
+    ft = "markdown",
     event = "BufReadPre " .. vim.fn.expand("~") .. "Obsidian/**.md",
-    keys = {
-      { prefix .. "o", "<cmd>ObsidianOpen<CR>", desc = "Open on App" },
-      { prefix .. "g", "<cmd>ObsidianSearch<CR>", desc = "Grep" },
-      { prefix .. "n", "<cmd>ObsidianNew<CR>", desc = "New Note" },
-      { prefix .. "N", "<cmd>Obsidian new_from_template<CR>", desc = "New Note (Template)" },
-      { prefix .. "<space>", "<cmd>ObsidianQuickSwitch<CR>", desc = "Find Files" },
-      { prefix .. "b", "<cmd>ObsidianBacklinks<CR>", desc = "Backlinks" },
-      { prefix .. "t", "<cmd>ObsidianTags<CR>", desc = "Tags" },
-      { prefix .. "T", "<cmd>ObsidianTemplate<CR>", desc = "Template" },
-      { prefix .. "L", "<cmd>ObsidianLink<CR>", mode = "v", desc = "Link" },
-      { prefix .. "l", "<cmd>ObsidianLinks<CR>", desc = "Links" },
-      { prefix .. "l", "<cmd>ObsidianLinkNew<CR>", mode = "v", desc = "New Link" },
-      { prefix .. "e", "<cmd>ObsidianExtractNote<CR>", mode = "v", desc = "Extract Note" },
-      { prefix .. "w", "<cmd>ObsidianWorkspace<CR>", desc = "Workspace" },
-      { prefix .. "r", "<cmd>ObsidianRename<CR>", desc = "Rename" },
-      { prefix .. "i", "<cmd>ObsidianPasteImg<CR>", desc = "Paste Image" },
-      { prefix .. "d", "<cmd>ObsidianDailies<CR>", desc = "Daily Notes" },
+
+    note_id_func = function(title)
+      if title == nil or title == "" then
+        return os.date("%Y-%m-%d %H:%M:%S")
+      else
+        return title:gsub(" ", "-"):gsub("[^A-Za-z0-9-]", ""):lower()
+      end
+    end,
+
+    note_path_func = function(spec)
+      local path = spec.dir / tostring(spec.id)
+      return path:with_suffix(".md")
+    end,
+
+    note_frontmatter_func = function(note)
+      if note.title then
+        note:add_alias(note.title)
+      end
+
+      local out = { aliases = note.aliases }
+
+      if note.metadata ~= nil and not vim.tbl_isempty(note.metadata) then
+        for k, v in pairs(note.metadata) do
+          out[k] = v
+        end
+      end
+
+      return out
+    end,
+
+    follow_url_func = function(url)
+      vim.fn.jobstart({ "xdg-open", url })
+    end,
+
+    image = {
+      resolve = function(path, src)
+        if require("obsidian.api").path_is_note(path) then
+          return require("obsidian.api").resolve_image_path(src)
+        end
+      end,
     },
+
     opts = {
       workspaces = {
         {
@@ -35,59 +59,24 @@ return {
           name = "Proffesional",
           path = "~/Obsidian",
         },
-        {
-          name = "Code",
-          path = "~/Developer/repos/Notes",
-        },
       },
-
       notes_subdir = "Notes",
       new_notes_location = "notes_subdir",
-
-      daily_notes = {
-        folder = "Dailies",
-        date_format = "%Y-%m-%d",
-        alias_format = "%B %-d, %Y",
-        default_tags = { "daily-notes" },
-        template = nil,
+      preferred_link_style = "wiki",
+      disable_frontmatter = false,
+      sort_by = "modified",
+      sort_reversed = true,
+      search_max_lines = 1000,
+      open_notes_in = "current",
+      templates = {
+        folder = "Templates",
+        date_format = "%Y-%m-%d-%a",
+        time_format = "%H:%M",
       },
-
-      note_id_func = function(title)
-        if title == nil or title == "" then
-          return os.date("%Y-%m-%d %H:%M:%S")
-        else
-          return title:gsub(" ", "-"):gsub("[^A-Za-z0-9-]", ""):lower()
-        end
-      end,
-
-      note_path_func = function(spec)
-        local path = spec.dir / tostring(spec.id)
-        return path:with_suffix(".md")
-      end,
-
-      note_frontmatter_func = function(note)
-        if note.title then
-          note:add_alias(note.title)
-        end
-
-        local out = { aliases = note.aliases }
-
-        if note.metadata ~= nil and not vim.tbl_isempty(note.metadata) then
-          for k, v in pairs(note.metadata) do
-            out[k] = v
-          end
-        end
-
-        return out
-      end,
-
       completion = {
-        nvim_cmp = false,
         blink = true,
+        nvim_cmp = false,
       },
-
-      create_new = false,
-
       picker = {
         name = "snacks.pick",
         note_mappings = {
@@ -99,7 +88,51 @@ return {
           insert_tag = "<C-l>",
         },
       },
-
+      daily_notes = {
+        folder = "Dailies",
+        date_format = "%Y-%m-%d",
+        alias_format = "%B %-d, %Y",
+        default_tags = { "daily-notes" },
+        template = nil,
+      },
+      ui = {
+        enable = true,
+        ignore_conceal_warn = false,
+        update_debounce = 200,
+        max_file_length = 5000,
+        checkbox = {
+          order = {
+            [" "] = { char = "󰄱 ", hl_group = "obsidiantodo" },
+            ["~"] = { char = "󰰱 ", hl_group = "obsidiantilde" },
+            ["!"] = { char = " ", hl_group = "obsidianimportant" },
+            [">"] = { char = " ", hl_group = "obsidianrightarrow" },
+            ["x"] = { char = "✔ ", hl_group = "obsidiandone" },
+          },
+        },
+        bullets = { char = "•", hl_group = "ObsidianBullet" },
+        external_link_icon = { char = " ", hl_group = "ObsidianExtLinkIcon" },
+        reference_text = { hl_group = "ObsidianRefText" },
+        highlight_text = { hl_group = "ObsidianHighlightText" },
+        tags = { hl_group = "ObsidianTag" },
+        block_ids = { hl_group = "ObsidianBlockID" },
+        hl_groups = {
+          ObsidianTodo = { bold = true, fg = "#f5a97f" },
+          ObsidianDone = { bold = true, fg = "#8aadf4" },
+          ObsidianRightArrow = { bold = true, fg = "#f5a97f" },
+          ObsidianTilde = { bold = true, fg = "#ee99a0" },
+          ObsidianImportant = { bold = true, fg = "#ed8796" },
+          ObsidianBullet = { bold = true, fg = "#8aadf4" },
+          ObsidianRefText = { underline = true, fg = "#c6a0f6" },
+          ObsidianExtLinkIcon = { fg = "#c6a0f6" },
+          ObsidianTag = { italic = true, fg = "#8aadf4" },
+          ObsidianBlockID = { italic = true, fg = "#8aadf4" },
+          ObsidianHighlightText = { bg = "#eed49f" },
+        },
+      },
+      attachments = {
+        img_folder = "assets/imgs",
+        confirm_img_paste = true,
+      },
       callbacks = {
         enter_note = function(_, note)
           vim.keymap.set("n", "gf", "<cmd>ObsidianFollowLink<cr>", {
@@ -110,84 +143,45 @@ return {
           })
         end,
       },
-
-      mappings = {
-        ["gf"] = {
-          action = function()
-            return require("obsidian").util.gf_passthrough()
-          end,
-          opts = { noremap = false, expr = true, buffer = true },
-        },
-        ["<C-c>"] = {
-          action = function()
-            return require("obsidian").util.toggle_checkbox()
-          end,
-          opts = { buffer = true },
-        },
-        ["<cr>"] = {
-          action = function()
-            return require("obsidian").util.smart_action()
-          end,
-          opts = { buffer = true, expr = true },
-        },
+      statusline = {
+        format = "{{backlinks}} backlinks  {{properties}} properties  {{words}} words  {{chars}} chars",
+        enabled = true,
       },
-
-      templates = {
-        folder = "Templates",
-        date_format = "%Y-%m-%d-%a",
-        time_format = "%H:%M",
+      footer = {
+        enabled = true,
+        format = "{{backlinks}} backlinks  {{properties}} properties  {{words}} words  {{chars}} chars",
+        hl_group = "Comment",
+        separator = string.rep("-", 80),
       },
-
-      follow_url_func = function(url)
-        vim.fn.jobstart({ "xdg-open", url })
-      end,
-
-      attachments = {
-        img_folder = "assets/imgs",
+      open = {
+        use_advanced_uri = false,
+        func = vim.ui.open,
       },
-
-      image = {
-        resolve = function(path, src)
-          if require("obsidian.api").path_is_note(path) then
-            return require("obsidian.api").resolve_image_path(src)
-          end
-        end,
+      checkbox = {
+        enabled = true,
+        create_new = true,
+        order = { " ", "~", "!", ">", "x" },
       },
-
-      ui = {
-        enable = false,
-        update_debounce = 200,
-        max_file_length = 5000,
-        statusline = {
-          enabled = true,
-          format = "{{backlinks}} backlinks | {{words}} words",
-        },
-        checkboxes = {
-          [" "] = { char = "󰄱 ", hl_group = "ObsidianTodo" },
-          ["x"] = { char = "✔ ", hl_group = "ObsidianDone" },
-          [">"] = { char = " ", hl_group = "ObsidianRightArrow" },
-          ["~"] = { char = "󰰱 ", hl_group = "ObsidianTilde" },
-          ["!"] = { char = " ", hl_group = "ObsidianImportant" },
-        },
-        bullets = { char = "•", hl_group = "ObsidianBullet" },
-        external_link_icon = { char = " ", hl_group = "ObsidianExtLinkIcon" },
-        reference_text = { hl_group = "ObsidianRefText" },
-        highlight_text = { hl_group = "ObsidianHighlightText" },
-        tags = { hl_group = "ObsidianTag" },
-        block_ids = { hl_group = "ObsidianBlockID" },
-        hl_groups = {
-          ObsidianTodo = { bold = true, fg = "#f78c6c" },
-          ObsidianDone = { bold = true, fg = "#89ddff" },
-          ObsidianRightArrow = { bold = true, fg = "#f78c6c" },
-          ObsidianTilde = { bold = true, fg = "#ff5370" },
-          ObsidianImportant = { bold = true, fg = "#d73128" },
-          ObsidianBullet = { bold = true, fg = "#89ddff" },
-          ObsidianRefText = { underline = true, fg = "#c792ea" },
-          ObsidianExtLinkIcon = { fg = "#c792ea" },
-          ObsidianTag = { italic = true, fg = "#89ddff" },
-          ObsidianBlockID = { italic = true, fg = "#89ddff" },
-          ObsidianHighlightText = { bg = "#75662e" },
-        },
+      comment = {
+        enabled = false,
+      },
+      keys = {
+        { prefix .. "o", "<cmd>ObsidianOpen<CR>", desc = "Open on App" },
+        { prefix .. "g", "<cmd>ObsidianSearch<CR>", desc = "Grep" },
+        { prefix .. "n", "<cmd>ObsidianNew<CR>", desc = "New Note" },
+        { prefix .. "N", "<cmd>Obsidian new_from_template<CR>", desc = "New Note (Template)" },
+        { prefix .. "<space>", "<cmd>ObsidianQuickSwitch<CR>", desc = "Find Files" },
+        { prefix .. "b", "<cmd>ObsidianBacklinks<CR>", desc = "Backlinks" },
+        { prefix .. "t", "<cmd>ObsidianTags<CR>", desc = "Tags" },
+        { prefix .. "T", "<cmd>ObsidianTemplate<CR>", desc = "Template" },
+        { prefix .. "L", "<cmd>ObsidianLink<CR>", mode = "v", desc = "Link" },
+        { prefix .. "l", "<cmd>ObsidianLinks<CR>", desc = "Links" },
+        { prefix .. "l", "<cmd>ObsidianLinkNew<CR>", mode = "v", desc = "New Link" },
+        { prefix .. "e", "<cmd>ObsidianExtractNote<CR>", mode = "v", desc = "Extract Note" },
+        { prefix .. "w", "<cmd>ObsidianWorkspace<CR>", desc = "Workspace" },
+        { prefix .. "r", "<cmd>ObsidianRename<CR>", desc = "Rename" },
+        { prefix .. "i", "<cmd>ObsidianPasteImg<CR>", desc = "Paste Image" },
+        { prefix .. "d", "<cmd>ObsidianDailies<CR>", desc = "Daily Notes" },
       },
     },
   },
