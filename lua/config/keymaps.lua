@@ -187,6 +187,11 @@ map({ "n", "v" }, "<leader>cf", function()
   LazyVim.format({ force = true })
 end, { desc = "Format" })
 
+-- save without formatting
+map({ "n", "i", "v" }, "<leader>Cf", function()
+  vim.cmd("noautocmd w")
+end, { desc = "Save (No Format)" })
+
 -- diagnostic
 local diagnostic_goto = function(next, severity)
   local go = next and vim.diagnostic.goto_next or vim.diagnostic.goto_prev
