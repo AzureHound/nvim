@@ -33,9 +33,9 @@ return {
           Info = " ",
         },
         git = {
-          added = "",
+          added = "+",
+          removed = "-",
           modified = "󰏪 ",
-          removed = "",
         },
         kinds = {
           Array = " ",
