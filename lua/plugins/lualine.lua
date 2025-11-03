@@ -40,14 +40,15 @@ return {
         options = {
           theme = "auto",
           component_separators = { left = "|", right = "|" },
-          -- section_separators = { left = "", right = "" },
           section_separators = { left = "", right = "" },
           globalstatus = vim.o.laststatus == 3,
-          disabled_filetypes = { statusline = { "dashboard", "alpha", "ministarter", "snacks_dashboard" } },
+          disabled_filetypes = {
+            statusline = { "alpha", "dashboard", "ministarter", "snacks_dashboard", "snacks_picker_input" },
+          },
         },
 
         sections = {
-          lualine_a = { { "mode", icon = "" } },
+          lualine_a = { { "mode", icon = "" } },
           lualine_b = {
             {
               function()
@@ -244,6 +245,10 @@ return {
         table.insert(opts.sections.lualine_c, { "navic", color_correction = "dynamic" })
       end
       return opts
+    end,
+    config = function(_, opts)
+      require("lualine").setup(opts)
+      vim.o.laststatus = 0
     end,
   },
 }
