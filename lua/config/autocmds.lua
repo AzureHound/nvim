@@ -2,6 +2,14 @@ local function augroup(name)
   return vim.api.nvim_create_augroup("lazyvim_" .. name, { clear = true })
 end
 
+-- Statusline
+vim.api.nvim_create_autocmd({ "VimEnter", "VimResume" }, {
+  group = vim.api.nvim_create_augroup("StatuslineOff", { clear = true }),
+  callback = function()
+    vim.opt.laststatus = 0
+  end,
+})
+
 -- Reload file on change
 vim.api.nvim_create_autocmd({ "FocusGained", "TermClose", "TermLeave" }, {
   group = augroup("checktime"),
