@@ -43,7 +43,13 @@ return {
           section_separators = { left = "", right = "" },
           globalstatus = vim.o.laststatus == 3,
           disabled_filetypes = {
-            statusline = { "alpha", "dashboard", "ministarter", "snacks_dashboard", "snacks_picker_input" },
+            statusline = {
+              "alpha",
+              "dashboard",
+              "ministarter",
+              "snacks_dashboard",
+              -- "snacks_picker_input",
+            },
           },
         },
 
