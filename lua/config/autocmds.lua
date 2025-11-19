@@ -2,12 +2,38 @@ local function augroup(name)
   return vim.api.nvim_create_augroup("lazyvim_" .. name, { clear = true })
 end
 
+local numtoggle = augroup("numtoggle")
+
 -- Reload file on change
 vim.api.nvim_create_autocmd({ "FocusGained", "TermClose", "TermLeave" }, {
   group = augroup("checktime"),
   callback = function()
     if vim.o.buftype ~= "nofile" then
       vim.cmd("checktime")
+    end
+  end,
+})
+
+-- Numtoggle
+vim.api.nvim_create_autocmd({ "BufEnter", "FocusGained", "InsertLeave", "CmdlineLeave", "WinEnter" }, {
+  pattern = "*",
+  group = numtoggle,
+  callback = function()
+    if vim.o.nu and vim.api.nvim_get_mode().mode ~= "i" then
+      vim.opt.relativenumber = true
+    end
+  end,
+})
+
+vim.api.nvim_create_autocmd({ "BufLeave", "FocusLost", "InsertEnter", "CmdlineEnter", "WinLeave" }, {
+  pattern = "*",
+  group = numtoggle,
+  callback = function()
+    if vim.o.nu then
+      vim.opt.relativenumber = false
+      if not vim.tbl_contains({ "@", "-" }, vim.v.event.cmdtype) then
+        vim.cmd("redraw")
+      end
     end
   end,
 })
