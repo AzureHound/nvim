@@ -54,6 +54,7 @@ return {
       supports_live = true,
     },
     git = { enabled = true },
+    gh = {},
     image = {
       enabled = true,
       doc = {
@@ -113,6 +114,8 @@ return {
             cycle = false,
           },
           follow_file = true,
+          gh_issue = {},
+          gh_pr = {},
           tree = true,
           focus = "list",
           jump = { close = false },
@@ -282,6 +285,35 @@ return {
         Snacks.picker.git_log_file()
       end,
       desc = "Git Log File",
+    },
+    --gh
+    {
+      "<leader>gi",
+      function()
+        Snacks.picker.gh_issue()
+      end,
+      desc = "GitHub Issues (open)",
+    },
+    {
+      "<leader>gI",
+      function()
+        Snacks.picker.gh_issue({ state = "all" })
+      end,
+      desc = "GitHub Issues (all)",
+    },
+    {
+      "<leader>gp",
+      function()
+        Snacks.picker.gh_pr()
+      end,
+      desc = "GitHub Pull Requests (open)",
+    },
+    {
+      "<leader>gP",
+      function()
+        Snacks.picker.gh_pr({ state = "all" })
+      end,
+      desc = "GitHub Pull Requests (all)",
     },
     -- grep
     {
