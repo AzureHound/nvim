@@ -1,0 +1,65 @@
+return {
+  "mikesmithgh/kitty-scrollback.nvim",
+  enabled = true,
+  lazy = true,
+  cmd = {
+    "KittyScrollbackGenerateKittens",
+    "KittyScrollbackCheckHealth",
+    "KittyScrollbackGenerateCommandLineEditing",
+  },
+  event = { "User KittyScrollbackLaunch" },
+  version = "*",
+  config = function()
+    require("kitty-scrollback").setup({
+      callbacks = {
+        after_setup = nil,
+        after_launch = nil,
+        after_ready = nil,
+        after_paste_window_ready = nil,
+      },
+      keymaps_enabled = true,
+      restore_options = false,
+      highlight_overrides = {
+        KittyScrollbackNvimStatusWinNormal = {},
+        KittyScrollbackNvimStatusWinHeartIcon = {},
+        KittyScrollbackNvimStatusWinSpinnerIcon = {},
+        KittyScrollbackNvimStatusWinReadyIcon = {},
+        KittyScrollbackNvimStatusWinKittyIcon = {},
+        KittyScrollbackNvimStatusWinNvimIcon = {},
+        KittyScrollbackNvimPasteWinNormal = {},
+        KittyScrollbackNvimPasteWinFloatBorder = {},
+        KittyScrollbackNvimPasteWinFloatTitle = {},
+        KittyScrollbackNvimVisual = {},
+        KittyScrollbackNvimNormal = {},
+      },
+      status_window = {
+        enabled = true,
+        style_simple = false,
+        autoclose = false,
+        show_timer = false,
+        icons = {
+          kitty = "󰄛",
+          heart = "󰣐",
+          nvim = "",
+        },
+      },
+      paste_window = {
+        highlight_as_normal_win = nil,
+        filetype = nil,
+        hide_footer = false,
+        winblend = 0,
+        winopts_overrides = nil,
+        footer_winopts_overrides = nil,
+        yank_register = "",
+        yank_register_enabled = true,
+      },
+      kitty_get_text = {
+        ansi = true,
+        extent = "all",
+        clear_selection = true,
+      },
+      checkhealth = false,
+      visual_selection_highlight_mode = "darken",
+    })
+  end,
+}
