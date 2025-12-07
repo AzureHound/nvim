@@ -14,6 +14,7 @@ return {
       "alpha",
       "edgy",
       "netrw",
+      "grug-far",
       "NvimTree",
       "lazy",
       "mason",
