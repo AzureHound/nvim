@@ -27,9 +27,12 @@ return {
         -- },
       },
       servers = {
+        bashls = {},
         cssls = {},
         eslint = {},
+        fish_lsp = {},
         html = {},
+        lemminx = {},
         lua_ls = {
           settings = {
             Lua = {
@@ -69,6 +72,9 @@ return {
               },
             },
           },
+        },
+        marksman = {
+          enabled = false, -- TODO: Make this dynamic & detect wether we are on an obsidian vault or a regular md file
         },
         tailwindcss = {
           root_dir = function(...)

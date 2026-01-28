@@ -13,10 +13,15 @@ return {
       },
     },
     ensure_installed = {
+      "bash-language-server",
+      "fish-lsp",
       "hyprls",
+      "lemminx",
       "nixfmt",
       "nixpkgs-fmt",
       "rnix-lsp",
+      "shellcheck",
+      "ty",
     },
   },
 }
