@@ -1,4 +1,7 @@
--- Explore
+-- init
+vim.loader.enable()
+
+-- explore
 vim.cmd("let g:netrw_liststyle = 3")
 
 -- leader key
