@@ -3,9 +3,13 @@ return {
     "nvim-treesitter/nvim-treesitter",
     opts = {
       ensure_installed = {
+        "bash",
+        "fish",
         "gitignore",
         "http",
+        "requirements",
         "sql",
+        "xml",
       },
       query_linter = {
         enable = true,
