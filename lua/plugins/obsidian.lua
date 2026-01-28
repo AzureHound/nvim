@@ -2,11 +2,28 @@ local prefix = "<leader>o"
 
 return {
   {
-    -- "epwalsh/obsidian.nvim",
-    "obsidian-nvim/obsidian.nvim", -- NOTE: Using a fork from the community
+    "obsidian-nvim/obsidian.nvim",
     dependencies = { "nvim-lua/plenary.nvim" },
     -- ft = "markdown",
     event = "BufReadPre " .. vim.fn.expand("~") .. "/Obsidian/**.md",
+    keys = {
+      { prefix .. "o", "<cmd>ObsidianOpen<CR>", desc = "Open on App" },
+      { prefix .. "g", "<cmd>ObsidianSearch<CR>", desc = "Grep" },
+      { prefix .. "n", "<cmd>ObsidianNew<CR>", desc = "New Note" },
+      { prefix .. "N", "<cmd>Obsidian new_from_template<CR>", desc = "New Note (Template)" },
+      { prefix .. "<space>", "<cmd>ObsidianQuickSwitch<CR>", desc = "Find Files" },
+      { prefix .. "b", "<cmd>ObsidianBacklinks<CR>", desc = "Backlinks" },
+      { prefix .. "t", "<cmd>ObsidianTags<CR>", desc = "Tags" },
+      { prefix .. "T", "<cmd>ObsidianTemplate<CR>", desc = "Template" },
+      { prefix .. "L", "<cmd>ObsidianLink<CR>", mode = "v", desc = "Link" },
+      { prefix .. "l", "<cmd>ObsidianLinks<CR>", desc = "Links" },
+      { prefix .. "l", "<cmd>ObsidianLinkNew<CR>", mode = "v", desc = "New Link" },
+      { prefix .. "e", "<cmd>ObsidianExtractNote<CR>", mode = "v", desc = "Extract Note" },
+      { prefix .. "w", "<cmd>ObsidianWorkspace<CR>", desc = "Workspace" },
+      { prefix .. "r", "<cmd>ObsidianRename<CR>", desc = "Rename" },
+      { prefix .. "i", "<cmd>ObsidianPasteImg<CR>", desc = "Paste Image" },
+      { prefix .. "d", "<cmd>ObsidianDailies<CR>", desc = "Daily Notes" },
+    },
     opts = {
       workspaces = {
         {
@@ -111,24 +128,6 @@ return {
       comment = {
         enabled = false,
       },
-    },
-    keys = {
-      { prefix .. "o", "<cmd>ObsidianOpen<CR>", desc = "Open on App" },
-      { prefix .. "g", "<cmd>ObsidianSearch<CR>", desc = "Grep" },
-      { prefix .. "n", "<cmd>ObsidianNew<CR>", desc = "New Note" },
-      { prefix .. "N", "<cmd>Obsidian new_from_template<CR>", desc = "New Note (Template)" },
-      { prefix .. "<space>", "<cmd>ObsidianQuickSwitch<CR>", desc = "Find Files" },
-      { prefix .. "b", "<cmd>ObsidianBacklinks<CR>", desc = "Backlinks" },
-      { prefix .. "t", "<cmd>ObsidianTags<CR>", desc = "Tags" },
-      { prefix .. "T", "<cmd>ObsidianTemplate<CR>", desc = "Template" },
-      { prefix .. "L", "<cmd>ObsidianLink<CR>", mode = "v", desc = "Link" },
-      { prefix .. "l", "<cmd>ObsidianLinks<CR>", desc = "Links" },
-      { prefix .. "l", "<cmd>ObsidianLinkNew<CR>", mode = "v", desc = "New Link" },
-      { prefix .. "e", "<cmd>ObsidianExtractNote<CR>", mode = "v", desc = "Extract Note" },
-      { prefix .. "w", "<cmd>ObsidianWorkspace<CR>", desc = "Workspace" },
-      { prefix .. "r", "<cmd>ObsidianRename<CR>", desc = "Rename" },
-      { prefix .. "i", "<cmd>ObsidianPasteImg<CR>", desc = "Paste Image" },
-      { prefix .. "d", "<cmd>ObsidianDailies<CR>", desc = "Daily Notes" },
     },
 
     callbacks = {
