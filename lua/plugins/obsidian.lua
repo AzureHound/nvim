@@ -7,22 +7,22 @@ return {
     -- ft = "markdown",
     event = "BufReadPre " .. vim.fn.expand("~") .. "/Obsidian/**.md",
     keys = {
-      { prefix .. "o", "<cmd>ObsidianOpen<CR>", desc = "Open on App" },
-      { prefix .. "g", "<cmd>ObsidianSearch<CR>", desc = "Grep" },
-      { prefix .. "n", "<cmd>ObsidianNew<CR>", desc = "New Note" },
+      { prefix .. "o", "<cmd>Obsidian open<CR>", desc = "Open on App" },
+      { prefix .. "g", "<cmd>Obsidian search<CR>", desc = "Grep" },
+      { prefix .. "n", "<cmd>Obsidian new<CR>", desc = "New Note" },
       { prefix .. "N", "<cmd>Obsidian new_from_template<CR>", desc = "New Note (Template)" },
-      { prefix .. "<space>", "<cmd>ObsidianQuickSwitch<CR>", desc = "Find Files" },
-      { prefix .. "b", "<cmd>ObsidianBacklinks<CR>", desc = "Backlinks" },
-      { prefix .. "t", "<cmd>ObsidianTags<CR>", desc = "Tags" },
-      { prefix .. "T", "<cmd>ObsidianTemplate<CR>", desc = "Template" },
-      { prefix .. "L", "<cmd>ObsidianLink<CR>", mode = "v", desc = "Link" },
-      { prefix .. "l", "<cmd>ObsidianLinks<CR>", desc = "Links" },
-      { prefix .. "l", "<cmd>ObsidianLinkNew<CR>", mode = "v", desc = "New Link" },
-      { prefix .. "e", "<cmd>ObsidianExtractNote<CR>", mode = "v", desc = "Extract Note" },
-      { prefix .. "w", "<cmd>ObsidianWorkspace<CR>", desc = "Workspace" },
-      { prefix .. "r", "<cmd>ObsidianRename<CR>", desc = "Rename" },
-      { prefix .. "i", "<cmd>ObsidianPasteImg<CR>", desc = "Paste Image" },
-      { prefix .. "d", "<cmd>ObsidianDailies<CR>", desc = "Daily Notes" },
+      { prefix .. "<space>", "<cmd>Obsidian quick_switch<CR>", desc = "Find Files" },
+      { prefix .. "b", "<cmd>Obsidian backlinks<CR>", desc = "Backlinks" },
+      { prefix .. "t", "<cmd>Obsidian tags<CR>", desc = "Tags" },
+      { prefix .. "T", "<cmd>Obsidian template<CR>", desc = "Template" },
+      { prefix .. "L", "<cmd>Obsidian link<CR>", mode = "v", desc = "Link" },
+      { prefix .. "l", "<cmd>Obsidian links<CR>", desc = "Links" },
+      { prefix .. "l", "<cmd>Obsidian link_new<CR>", mode = "v", desc = "New Link" },
+      { prefix .. "e", "<cmd>Obsidian extract_note<CR>", mode = "v", desc = "Extract Note" },
+      { prefix .. "w", "<cmd>Obsidian workspace<CR>", desc = "Workspace" },
+      { prefix .. "r", "<cmd>Obsidian rename<CR>", desc = "Rename" },
+      { prefix .. "i", "<cmd>Obsidian paste_img<CR>", desc = "Paste Image" },
+      { prefix .. "d", "<cmd>Obsidian dailies<CR>", desc = "Daily Notes" },
     },
     opts = {
       workspaces = {
@@ -38,10 +38,6 @@ return {
       notes_subdir = "Notes",
       new_notes_location = "notes_subdir",
       preferred_link_style = "wiki",
-      disable_frontmatter = false,
-      sort_by = "modified",
-      sort_reversed = true,
-      search_max_lines = 1000,
       open_notes_in = "current",
       templates = {
         folder = "Templates",
@@ -108,12 +104,12 @@ return {
         },
       },
       attachments = {
-        img_folder = "assets/imgs",
+        folder = "assets/imgs",
         confirm_img_paste = true,
       },
       statusline = {
-        format = "{{backlinks}} backlinks  {{properties}} properties  {{words}} words  {{chars}} chars",
-        enabled = true,
+        enabled = false,
+        format = "Backlinks: {{backlinks}} | Words: {{words}}",
       },
       footer = {
         enabled = true,
@@ -128,6 +124,7 @@ return {
       comment = {
         enabled = false,
       },
+      legacy_commands = false,
     },
 
     callbacks = {
@@ -135,7 +132,7 @@ return {
         if not note or not note.bufnr then
           return
         end
-        vim.keymap.set("n", "gf", "<cmd>ObsidianFollowLink<cr>", {
+        vim.keymap.set("n", "gf", "<cmd>Obsidian follow_link<cr>", {
           buffer = note.bufnr,
           expr = note.expr,
           noremap = note.noremap,
@@ -173,9 +170,21 @@ return {
       return out
     end,
 
-    follow_url_func = function(url)
-      vim.fn.jobstart({ "xdg-open", url })
-    end,
+    callback = {
+      enter_note = function(note)
+        vim.ui.open = (function(overridden)
+          return function(uri, opt)
+            if vim.endswith(uri, ".png") then
+              vim.cmd("edit " .. uri)
+              return
+            elseif vim.endswith(uri, ".pdf") then
+              opt = { cmd = { "zathura" } }
+            end
+            return overridden(uri, opt)
+          end
+        end)(vim.ui.open)
+      end,
+    },
 
     image = {
       resolve = function(path, src)
@@ -234,7 +243,7 @@ return {
     "nvim-lualine/lualine.nvim",
     optional = true,
     opts = function(_, opts)
-      table.insert(opts.sections.lualine_x, 1, "g:obsidian")
+      table.insert(opts.sections.lualine_x, 1, "b:obsidian")
     end,
   },
 }
