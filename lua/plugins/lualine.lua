@@ -60,6 +60,7 @@ return {
               function()
                 local branch = vim.b.gitsigns_head or vim.fn.FugitiveHead()
                 if not branch or branch == "" then
+                  _G.git_remote_data = nil
                   return ""
                 end
 
@@ -67,7 +68,7 @@ return {
                   _G.git_remote_data = { icon = " ", color = "#a6da95" }
 
                   local remote_handle =
-                    io.popen("git config branch.$(git symbolic-ref --short HEAD).remote 2>/dev/null")
+                    io.popen("git config branch.$(git symbolic-ref --short HEAD 2>/dev/null).remote 2>/dev/null")
                   if remote_handle then
                     local remote_name = remote_handle:read("*l")
                     remote_handle:close()
